@@ -8,11 +8,11 @@ def division(dividend, divisor):
         current_quotient = 0                                                         # c3     n
         current_remainder = 0                                                        # c4     n
         for j in range(1, 10):                                                       # c5     9 * n
-            if current_dividend - (j * divisor) < 0:                                 # c6     9 * n
+            if current_dividend - (j * divisor) < 0:                                 # c6     9 * n * m
                 current_quotient = j - 1                                             # c7     9 * n
-                current_remainder = current_dividend - (current_quotient * divisor)  # c8     9 * n
+                current_remainder = current_dividend - (current_quotient * divisor)  # c8     9 * n * m
                 break                                                                # c9     9 * n
-            if current_dividend - (j * divisor) == 0:                                # c10    9 * n
+            if current_dividend - (j * divisor) == 0:                                # c10    9 * n * m
                 current_quotient = j                                                 # c11    9 * n
                 current_remainder = 0                                                # c12    9 * n
                 break                                                                # c13    9 * n
@@ -21,11 +21,11 @@ def division(dividend, divisor):
         quotient = quotient * 10 + current_quotient                                  # c15    n
 
     return quotient, current_remainder
-# T(n) = n * (c1 + c2 + c3 + c4 + 9*c5 + 9*c6 + 9*c7 + 9*c8 + 9*c9 + 9*c10 + 9*c11 + 9*c12 + 9*c13 + c14 + c15) = nd, d > 0
-# T(n) = O(n)
+# T(n) = nm * (c1*n + c2*n + c3*n + c4*n + 9*c5*n + 9*c6 + 9*c7*n + 9*c8 + 9*c9*n + 9*c10 + 9*c11*n + 9*c12*n + 9*c13*n + c14*n + c15*n) = nm*d, d > 0
+# T(n) = O(nm)
 
-# лучший: O(n) - на 10 строке надо зайти ровно 1 раз для каждой цифры из dividend
-# худший: O(9n) = O(n) - для каждого делимого перебрать все числа из [1, 9]
+# лучший: O(nm) - на 10 строке надо зайти ровно 1 раз для каждой цифры из dividend
+# худший: O(9nm) = O(n) - для каждого делимого перебрать все числа из [1, 9]
 
 dividend = 2713919314930
 divisor = 123242
