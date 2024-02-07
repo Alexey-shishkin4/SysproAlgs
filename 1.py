@@ -1,9 +1,13 @@
 def division(dividend, divisor):
     quotient = 0
     current_dividend = 0
+    number = []
+    while dividend > 0:
+        number.insert(0, dividend % 10)
+        dividend //= 10
                                                                                      # время  кол-во операций
-    for i in str(dividend):                                                          # с1     n
-        current_dividend = current_dividend * 10 + int(i)                            # c2     n
+    for i in number:                                                                 # с1     n
+        current_dividend = current_dividend * 10 + i                                 # c2     n
 
         current_quotient = 0                                                         # c3     n
         current_remainder = 0                                                        # c4     n
@@ -24,11 +28,11 @@ def division(dividend, divisor):
 # T(n) = nm * (c1*n + c2*n + c3*n + c4*n + 9*c5*n + 9*c6 + 9*c7*n + 9*c8 + 9*c9*n + 9*c10 + 9*c11*n + 9*c12*n + 9*c13*n + c14*n + c15*n) = nm*d, d > 0
 # T(n) = O(nm)
 
-# лучший: O(nm) - на 10 строке надо зайти ровно 1 раз для каждой цифры из dividend
+# лучший: O(nm) - на 14 строке надо зайти ровно 1 раз для каждой цифры из dividend
 # худший: O(9nm) = O(nm) - для каждого делимого перебрать все числа из [1, 9]
 
 dividend = 2713919314930
 divisor = 123242
 result_quotient, result_remainder = division(dividend, divisor)
 print(f"целая часть: {result_quotient} остаток: {result_remainder}")
-#print(dividend // divisor, dividend % divisor)
+#print(*divmod(dividend, divisor))
