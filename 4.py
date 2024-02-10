@@ -1,45 +1,47 @@
-import argparse
-import os
 import subprocess
+import os
 
 
-def execute(command):
-    return subprocess.run(command, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).returncode
+def get_commit_range(repo_path, good_commit, bad_commit):
+    os.chdir(repo_path)
+    commit_list = subprocess.run(['git', 'log', '--pretty=%H', f'{good_commit}..{bad_commit}'], capture_output=True,
+                                 text=True)
+    commits = list(reversed(commit_list.stdout.strip().split('\n')))
+    return commits
 
 
-def is_bad(commit):
-    execute(f'git checkout {commit}')
-    result = execute(' '.join(args.command)) != 0
-    execute('git checkout -')
-    return result
+def test_commit(commit_hash, test_command):
+    result = subprocess.run(['git', 'checkout', commit_hash], capture_output=True)
+    if result.returncode != 0:
+        return False
+    result = subprocess.run(test_command.split(), capture_output=True)
+    subprocess.run(['git', 'checkout', '-'])
+    return result.returncode == 0
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('repo_path')
-parser.add_argument('first_commit')
-parser.add_argument('latest_commit')
-parser.add_argument('command', nargs='+')
-args = parser.parse_args()
+def binary_search(repo_path, good_commit, bad_commit, test_command):
+    commits = get_commit_range(repo_path, good_commit, bad_commit)
 
-os.chdir(args.repo_path)
+    left = 0
+    right = len(commits) - 1
+    while left <= right:
+        mid = left + (right - left) // 2
+        commit_hash = commits[mid]
+        if test_commit(commit_hash, test_command):
+            right = mid - 1
+        else:
+            left = mid + 1
 
-command = f'git log {args.first_commit}..{args.latest_commit} --oneline'
-output = subprocess.check_output(command, shell=True, text=True).splitlines()
-commits = [i.split()[0] for i in output]
+    return commits[left]
 
 
-low = 0
-high = len(commits) - 1
-while low <= high:
-    mid = (low + high) // 2
-    if is_bad(commits[mid]):
-        high = mid - 1
-    else:
-        low = mid + 1
+# print(get_commit_range('/home/alex_ghoul/test_repo', '71364d0', 'a700e6c'))
+# print(binary_search('/home/alex_ghoul/test_repo', '71364d0', 'a700e6c', './script'))
+if __name__ == "__main__":
+    repo_path = input("Enter path to the git repository: ")
+    good_commit = input("Enter the hash of the good commit: ")
+    bad_commit = input("Enter the hash of the bad commit: ")
+    test_command = input("Enter the test command: ")
 
-if low < len(commits):
-    print(f"Первый плохой коммит: {commits[low]}")
-else:
-    print("Нет 'плохих' коммитов")
-
-execute('git checkout -')
+    bad_commit_found = binary_search(repo_path, good_commit, bad_commit, test_command)
+    print(f"The first bad commit is: {bad_commit_found}")
