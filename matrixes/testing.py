@@ -16,55 +16,25 @@ def format_table(benchmarks, algos, results):
                                                                     for j in range(len(results[i]))) + ' |')
 
 
-# Примеры входных данных
-test_cases = {
-    "Small Matrix": ([
-                         [1, 2],
-                         [3, 4]
-                     ], [
-                         [5, 6],
-                         [7, 8]
-                     ]),
-    "Medium Matrix": ([
-                          [1, 2, 3, 4],
-                          [5, 6, 7, 8],
-                          [9, 10, 11, 12],
-                          [13, 14, 15, 16]
-                      ], [
-                          [17, 18, 19, 20],
-                          [21, 22, 23, 24],
-                          [25, 26, 27, 28],
-                          [29, 30, 31, 32]
-                      ]),
-    "Large Matrix": ([
-                         [1, 2, 3, 4, 5, 6, 7, 8],
-                         [9, 10, 11, 12, 13, 14, 15, 16],
-                         [17, 18, 19, 20, 21, 22, 23, 24],
-                         [25, 26, 27, 28, 29, 30, 31, 32],
-                         [33, 34, 35, 36, 37, 38, 39, 40],
-                         [41, 42, 43, 44, 45, 46, 47, 48],
-                         [49, 50, 51, 52, 53, 54, 55, 56],
-                         [57, 58, 59, 60, 61, 62, 63, 64]
-                     ], [
-                         [65, 66, 67, 68, 69, 70, 71, 72],
-                         [73, 74, 75, 76, 77, 78, 79, 80],
-                         [81, 82, 83, 84, 85, 86, 87, 88],
-                         [89, 90, 91, 92, 93, 94, 95, 96],
-                         [97, 98, 99, 100, 101, 102, 103, 104],
-                         [105, 106, 107, 108, 109, 110, 111, 112],
-                         [113, 114, 115, 116, 117, 118, 119, 120],
-                         [121, 122, 123, 124, 125, 126, 127, 128]
-                     ])
 
-}
+test_cases = {}
+with open('tests/test1', 'r', encoding='utf-8') as file:
+    test_cases['128x128'] = eval(file.read())
+with open('tests/test2', 'r', encoding='utf-8') as file:
+    test_cases['256x256'] = eval(file.read())
+with open('tests/test3', 'r', encoding='utf-8') as file:
+    test_cases['512x512'] = eval(file.read())
+with open('tests/test4', 'r', encoding='utf-8') as file:
+    test_cases['1024x1024'] = eval(file.read())
+
 
 def test_alg(functions, test_cases):
-    res = [[], [], []]
+    res = [[], [], [], []]
     c = 0
     for j in test_cases.keys():
         for func in functions:
             start_time = time.time()
-            func(*test_cases[j])
+            func(test_cases[j], test_cases[j])
             end_time = time.time()
             elapsed_time = end_time - start_time
             res[c].append(elapsed_time)
@@ -75,7 +45,7 @@ def test_alg(functions, test_cases):
 
 funcs = [matrix_multi, recur_matrix_multi, shtrassen_matrix]
 res = test_alg(funcs, test_cases)
-format_table(["Small Matrix", "Medium Matrix", "Large Matrix"],
+format_table(["128x128", "256x256", "512x512", "1024x1024"],
              ["Trivial Multiplication", "Recursive Multiplication", "Strassen Multiplication"],
              res)
 print()
@@ -83,16 +53,12 @@ print()
 with open("test.txt", "r", encoding='utf-8') as file:
     data = eval(file.read())
 
-# 512x512
-# Trivial
-start_time = time.time()
-matrix_multi(data, data)
-end_time = time.time()
-elapsed_time = end_time - start_time
-print(elapsed_time)
-# Strassen
-start_time = time.time()
-shtrassen_matrix(data, data)
-end_time = time.time()
-elapsed_time = end_time - start_time
-print(elapsed_time)
+
+"""
+Benchmark| Trivial Multiplication | Recursive Multiplication | Strassen Multiplication |
+|--------------------------------------------------------------------------------------|
+128x128  | 0.15216803550720215    | 0.0015025138854980469    | 0.0030050277709960938   |
+256x256  | 1.2863037586212158     | 0.015727758407592773     | 0.04765653610229492     |
+512x512  | 12.264899015426636     | 0.12553095817565918      | 0.46350574493408203     |
+1024x1024| 117.94457745552063     | 1.2421700954437256       | 3.7402358055114746      |
+"""

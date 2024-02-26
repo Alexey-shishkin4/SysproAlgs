@@ -33,7 +33,7 @@ def matrix_multi(first, second):
 
 def recur_matrix_multi(first, second):
     length = len(first)
-    if length == 1:
+    if length <= 64:
         return [[first[0][0] * second[0][0]]]
     a = [row[:length // 2] for row in first[:length // 2]]
     b = [row[length // 2:] for row in first[:length // 2]]
@@ -78,7 +78,7 @@ def shtrassen_matrix(first, second):
         second = zeros_matrix(second)
 
     length = len(first)
-    if length == 1:
+    if length <= 64:
         return [[first[0][0] * second[0][0]]]
     a = [row[:length // 2] for row in first[:length // 2]]
     b = [row[length // 2:] for row in first[:length // 2]]
