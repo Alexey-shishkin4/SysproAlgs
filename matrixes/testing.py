@@ -26,10 +26,12 @@ with open('tests/test3', 'r', encoding='utf-8') as file:
     test_cases['512x512'] = eval(file.read())
 with open('tests/test4', 'r', encoding='utf-8') as file:
     test_cases['1024x1024'] = eval(file.read())
+with open('tests/test5', 'r', encoding='utf-8') as file:
+    test_cases['500x500'] = eval(file.read())
 
 
 def test_alg(functions, test_cases):
-    res = [[], [], [], []]
+    res = [[], [], [], [], []]
     c = 0
     for j in test_cases.keys():
         for func in functions:
@@ -45,7 +47,7 @@ def test_alg(functions, test_cases):
 
 funcs = [matrix_multi, recur_matrix_multi, shtrassen_matrix]
 res = test_alg(funcs, test_cases)
-format_table(["128x128", "256x256", "512x512", "1024x1024"],
+format_table(["128x128", "256x256", "512x512", "1024x1024", "500x500"],
              ["Trivial Multiplication", "Recursive Multiplication", "Strassen Multiplication"],
              res)
 print()
@@ -57,8 +59,9 @@ with open("test.txt", "r", encoding='utf-8') as file:
 """
 Benchmark| Trivial Multiplication | Recursive Multiplication | Strassen Multiplication |
 |--------------------------------------------------------------------------------------|
-128x128  | 0.15216803550720215    | 0.0015025138854980469    | 0.0030050277709960938   |
-256x256  | 1.2863037586212158     | 0.015727758407592773     | 0.04765653610229492     |
-512x512  | 12.264899015426636     | 0.12553095817565918      | 0.46350574493408203     |
-1024x1024| 117.94457745552063     | 1.2421700954437256       | 3.7402358055114746      |
+128x128  | 0.15473103523254395    | 0.0019996166229248047    | 0.0030078887939453125   |
+256x256  | 1.3160440921783447     | 0.017412424087524414     | 0.04616832733154297     |
+512x512  | 12.496443271636963     | 0.17498469352722168      | 0.5274195671081543      |
+1024x1024| 121.54719042778015     | 1.4747910499572754       | 3.746706962585449       |
+500x500  | 12.706296682357788     | 0.1467134952545166       | 0.640181303024292       |
 """
