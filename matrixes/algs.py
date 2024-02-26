@@ -34,7 +34,7 @@ def matrix_multi(first, second):
 def recur_matrix_multi(first, second):
     length = len(first)
     if length <= 64:
-        return [[first[0][0] * second[0][0]]]
+        return matrix_multi(first, second)
     a = [row[:length // 2] for row in first[:length // 2]]
     b = [row[length // 2:] for row in first[:length // 2]]
     c = [row[:length // 2] for row in first[length // 2:]]
@@ -79,7 +79,7 @@ def shtrassen_matrix(first, second):
 
     length = len(first)
     if length <= 64:
-        return [[first[0][0] * second[0][0]]]
+        return matrix_multi(first, second)
     a = [row[:length // 2] for row in first[:length // 2]]
     b = [row[length // 2:] for row in first[:length // 2]]
     c = [row[:length // 2] for row in first[length // 2:]]
