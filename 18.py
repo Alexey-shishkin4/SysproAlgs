@@ -1,65 +1,94 @@
 from structures import Stack
 
 
-def get_priority(op):
-    priorities = {
+priorities = {
         '(': 0,
         ')': 0,
-        '+': 1,
-        '-': 1,
+        '!': 1,
+        '~': 1,
         '**': 2,
-        '*': 2,
-        '/': 2,
-        '%': 2,
-        '&': 3,
-        '|': 3,
-        '^': 3,
-        '<<': 4,
-        '>>': 4,
-        '<': 5,
-        '<=': 5,
-        '>': 5,
-        '>=': 5,
-        '==': 6,
-        '!=': 6,
-        '&&': 7,
-        '||': 8,
-        '!': 9,
-        '~': 9,
+        '*': 4,
+        '/': 4,
+        '%': 4,
+        '+': 3,
+        '-': 3,
+        '>>': 5,
+        '<<': 6,
+        '<': 7,
+        '<=': 7,
+        '>': 7,
+        '>=': 7,
+        '==': 8,
+        '!=': 8,
+        '&': 9,
+        '^': 10,
+        '|': 11,
+        '&&': 12,
+        '||': 13
     }
-    return priorities[op]
 
 
-def is_operator(token):  # << >> <= >= == != && || **
-    operators = ['+', '-', '*', '/', '%', '&', '|', '^', '<<', '>>', '<', '<=', '>', '>=', '==', '!=', '&&', '||', '!', '~', '**']
+def get_priority(op):
+    if op in priorities:
+        return priorities[op]
+
+
+def is_operator(token):
+    operators = \
+        ['!', '~', '**', '+', '-', '*', '/', '%', '>>', '<<', '<', '<=', '>=', '==', '!=', '&', '^', '|', '&&', '||']
     return token in operators
 
 
 def infix_to_rpn(expression):
-    output = []
-    stack = Stack()
+    tokens = []
+    d = 0
+    n = len(expression)
     flag = False
-    for i in range(len(expression)):
+    for i in range(n):
         if flag:
             flag = False
             continue
-        if expression[i].isdigit():
-            output.append(expression[i])
-        elif expression[i] == '(':
-            stack.push(expression[i])
-        elif expression[i] == ')':
-            while not stack.is_empty() and stack.peek() != '(':
-                output.append(stack.pop())
+        if expression[i] == ' ':
+            if d != 0:
+                tokens.append(str(d))
+                d = 0
+            continue
+        if i + 1 < n:
+            if (expression[i] + expression[i + 1]) in priorities:
+                tokens.append(expression[i] + expression[i + 1])
+                flag = True
+                continue
+        if expression[i] == ')':
+            if d != 0:
+                tokens.append(str(d))
+                d = 0
+            tokens.append(expression[i])
+        elif expression[i] in priorities:
+            tokens.append(expression[i])
+        elif expression[i].isdigit():
+            d *= 10
+            d += int(expression[i])
+    if d != 0:
+        tokens.append(str(d))
+    output = []
+    stack = Stack()
+    right_ops = ['!', '~', '**']
+    for i in tokens:
+        if i == '(':
+            stack.push(i)
+        elif i == ')':
+            while stack.peek() != '(':
+                oper = stack.pop()
+                output.append(oper)
             stack.pop()
-        elif i + 1 < len(expression) and is_operator(expression[i] + expression[i + 1]):
-            while not stack.is_empty() and get_priority(stack.peek()) > get_priority(expression[i] + expression[i + 1]):
-                output.append(stack.pop())
-            stack.push(expression[i] + expression[i + 1])
-            flag = True
-        elif is_operator(expression[i]):
-            while not stack.is_empty() and get_priority(stack.peek()) >= get_priority(expression[i]):
-                output.append(stack.pop())
-            stack.push(expression[i])
+        elif i.isdigit():
+            output.append(i)
+        elif is_operator(i):
+            if i not in right_ops:
+                while not stack.is_empty() and\
+                        (get_priority(i) <= get_priority(stack.peek()) or stack.peek() in right_ops):
+                    output.append(stack.pop())
+            stack.push(i)
 
     while not stack.is_empty():
         output.append(stack.pop())
@@ -67,10 +96,10 @@ def infix_to_rpn(expression):
     return ' '.join(output)
 
 
-"""infix_expression = "3 + 14"
+"""infix_expression = "!5 | (3 & 7)"
 print(infix_expression)
-print(infix_to_rpn(infix_expression))
-"""
+print(infix_to_rpn(infix_expression))"""
+
 # print(infix_to_rpn("2 ** 3 ** 2"))
 
 
