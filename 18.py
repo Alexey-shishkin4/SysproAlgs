@@ -88,6 +88,9 @@ def infix_to_rpn(expression):
                 while not stack.is_empty() and\
                         (get_priority(i) <= get_priority(stack.peek()) or stack.peek() in right_ops):
                     output.append(stack.pop())
+            else:
+                while not stack.is_empty() and get_priority(i) < get_priority(stack.peek()):
+                    output.append(stack.pop())
             stack.push(i)
 
     while not stack.is_empty():
