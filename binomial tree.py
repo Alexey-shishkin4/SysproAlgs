@@ -1,5 +1,3 @@
-# insert(val), peek_min(), extract_min(), decrease_key(s, k), merge (h1, h2), delete(s)
-
 class Node:
     def __init__(self, value):
         self.value = value
@@ -59,30 +57,44 @@ class BinomialHeap:
     def merge(self, other_heap):
         new_trees = []
         i, j = 0, 0
+        carry = None
 
-        while i < len(self.trees) and j < len(other_heap.trees):
-            tree1 = self.trees[i]
-            tree2 = other_heap.trees[j]
+        while i < len(self.trees) or j < len(other_heap.trees):
+            trees = []
 
-            if len(tree1) < len(tree2):
-                new_trees.append(tree1)
-                i += 1
-            elif len(tree1) > len(tree2):
-                new_trees.append(tree2)
-                j += 1
-            else:
-                merged_tree = tree1.merge_trees(tree2)
-                new_trees.append(merged_tree)
-                i += 1
-                j += 1
+            if i < len(self.trees):
+                trees.append(self.trees[i])
+            if j < len(other_heap.trees):
+                trees.append(other_heap.trees[j])
+            if carry is not None:
+                trees.append(carry)
 
-        while i < len(self.trees):
-            new_trees.append(self.trees[i])
-            i += 1
+            if len(trees) == 1:
+                new_trees.append(trees[0])
+                if i < len(self.trees):
+                    i += 1
+                else:
+                    j += 1
+                carry = None
+            elif len(trees) == 2:
+                carry = trees[0].merge_trees(trees[1])
+                if i < len(self.trees) and j < len(other_heap.trees):
+                    i += 1
+                    j += 1
+                elif i < len(self.trees):
+                    i += 1
+                else:
+                    j += 1
+            elif len(trees) == 3:
+                new_trees.append(trees[0])
+                carry = trees[1].merge_trees(trees[2])
+                if i < len(self.trees):
+                    i += 1
+                else:
+                    j += 1
 
-        while j < len(other_heap.trees):
-            new_trees.append(other_heap.trees[j])
-            j += 1
+        if carry is not None:
+            new_trees.append(carry)
 
         self.trees = new_trees
         self.count += other_heap.count
@@ -90,7 +102,6 @@ class BinomialHeap:
 
     def delete(self, node):
         self.decrease_key(node, float('-inf'))
-        self._find_min()
         self.extract_min()
 
     def _find_min(self):
@@ -103,6 +114,8 @@ class BinomialHeap:
         parent = node.parent
         while parent is not None and node.value < parent.value:
             node.value, parent.value = parent.value, node.value
+            node = parent
+            parent = node.parent
 
     def __len__(self):
         return self.count
