@@ -8,7 +8,7 @@ class Node:
         self.children.append(child)
 
     def merge_trees(self, other):
-        if len(self) != len(other) and len(self) != 0 and len(other) != 0:
+        if len(self) != len(other):
             print(len(self), len(other))
             raise ValueError("Cannot merge trees of different orders")
         self, other = sorted([self, other], key=lambda x: x.value)
@@ -80,14 +80,21 @@ class BinomialHeap:
                     j += 1
                 carry = None
             elif len(trees) == 2:
-                carry = trees[0].merge_trees(trees[1])
-                if i < len(self.trees) and j < len(other_heap.trees):
-                    i += 1
-                    j += 1
-                elif i < len(self.trees):
-                    i += 1
+                if len(trees[0]) == len(trees[1]):
+                    carry = trees[0].merge_trees(trees[1])
+                    if i < len(self.trees) and j < len(other_heap.trees):
+                        i += 1
+                        j += 1
+                    elif i < len(self.trees):
+                        i += 1
+                    else:
+                        j += 1
                 else:
-                    j += 1
+                    new_trees.append(max([trees[0], trees[1]], key=len))
+                    if i < len(self.trees):
+                        i += 1
+                    else:
+                        j += 1
             elif len(trees) == 3:
                 new_trees.append(trees[0])
                 carry = trees[1].merge_trees(trees[2])
