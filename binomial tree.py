@@ -8,7 +8,7 @@ class Node:
         self.children.append(child)
 
     def merge_trees(self, other):
-        if abs(len(self) - len(other)) > 1:
+        if len(self) != len(other) and len(self) != 0 and len(other) != 0:
             print(len(self), len(other))
             raise ValueError("Cannot merge trees of different orders")
         self, other = sorted([self, other], key=lambda x: x.value)
@@ -178,10 +178,18 @@ def test_merge():
     assert heap1.is_empty()
 
 
+def test_insert():
+    heap1 = BinomialHeap()
+    for i in range(1, 11):
+        heap1.insert(i)
+
+
+
 test_insert_and_extract_min()
 test_peek_min()
 test_decrease_key()
 test_delete()
 test_merge()
+test_insert()
 
 print("All tests passed!")
