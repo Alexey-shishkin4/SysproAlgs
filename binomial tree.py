@@ -183,6 +183,9 @@ def test_insert():
     for i in range(1, 11):
         heap1.insert(i)
 
+    for i in range(1, 11):
+        assert heap1.extract_min().value == i
+
 
 
 test_insert_and_extract_min()
