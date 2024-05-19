@@ -8,6 +8,9 @@ class Node:
         self.children.append(child)
 
     def merge_trees(self, other):
+        if abs(len(self) - len(other)) > 1:
+            print(len(self), len(other))
+            raise ValueError("Cannot merge trees of different orders")
         self, other = sorted([self, other], key=lambda x: x.value)
         self.add_child(other)
         other.parent = self
