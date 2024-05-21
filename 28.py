@@ -20,12 +20,12 @@ class BloomFilter:
         random.seed(item)
         return [random.randint(0, self.size - 1) for _ in range(self.num_hashes)]
 
-    def add(self, item):
+    def insert(self, item):
         hashes = self.hash_functions(item)
         for i in hashes:
             self.bit_array[i] = True
 
-    def __contains__(self, item):
+    def __contains__(self, item):  # lookup(value)
         hashes = self.hash_functions(item)
         for i in hashes:
             if not self.bit_array[i]:
@@ -38,9 +38,9 @@ desired_error_rate = 0.01  # Желаемая вероятность ошибк�
 
 bloom_filter = BloomFilter(total_requests, desired_error_rate)
 
-bloom_filter.add("192.168.0.1")
-bloom_filter.add("10.0.0.1")
-bloom_filter.add("172.16.0.1")
+bloom_filter.insert("192.168.0.1")
+bloom_filter.insert("10.0.0.1")
+bloom_filter.insert("172.16.0.1")
 
 print("192.168.0.1" in bloom_filter)  # true
 print("10.0.0.2" in bloom_filter)    # false
